@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+    <div class="container-fluid text-center" style="padding-right: 0;padding-left: 0">
+        <div class="row bg-white align-items-center justify-content-center"
+             style="height: 70px; width: 100%; margin-left: 0;margin-right: 0;">
+            <div class="col-2 " style="color: #0d6efd">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                     class="bi bi-check-circle-fill" viewBox="0 0 16 16" style="color: #0d6efd">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"></path>
+                </svg>
+                <span>基本信息</span>
+            </div>
+            <div class="col-auto">
+                <span style="color:#0d6efd ">
+                    ------------------
+                </span>
+            </div>
+            <div class="col-2 " style="color: #0d6efd">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                     class="bi bi-check-circle-fill" viewBox="0 0 16 16" style="color: #0d6efd">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"></path>
+                </svg>
+                <span>数据集信息</span>
+            </div>
+
+            <div class="col-auto">
+                <span style="color:#0d6efd ">
+                    ------------------
+                </span>
+            </div>
+
+            <div class="col-2" style="color: #0d6efd">
+                <div class="spinner-border text-primary spinner-border-sm"></div>
+                <span>
+                    结果信息
+                </span>
+            </div>
+        </div>
+        <div class="row" style="width: 100%;margin-top: 20px;margin-left: 0;margin-right: 0;">
+            <div class="container bg-white text-center " style="padding: 60px">
+                <div class="alert alert-primary alert-dismissible fade show">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <strong>任务发布成功!</strong> &nbsp; 请保存好TaskID！
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor"
+                     class="bi bi-check-circle-fill text-success" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
+                <div>
+                    任务发布成功
+                </div>
+
+
+                <div class="container" style="padding: 50px">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong>
+                                Task ID
+                            </strong>
+                        </div>
+                        <div class="card-body m-3">{{ taskid }}</div>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col pt-3">
+                        <a type="button" class="btn btn-primary " href="/home">完成</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

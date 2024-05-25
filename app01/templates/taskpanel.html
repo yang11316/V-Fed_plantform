@@ -1,0 +1,295 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+    <div class="container-fluid " style="padding-right: 0;padding-left: 0">
+        <div class="row bg-white " style="height: 70px; width: 100%; margin-left: 0;margin-right: 0;">
+            <div class="row" style="padding-top: 10px; padding-left: 20px">
+                <div class="col">
+                    <a class="fs-4 mb-3" style="text-decoration:none; color: #0b2e13" href="/home/">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" fill="currentColor"
+                             class="bi bi-arrow-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                  d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"></path>
+                        </svg>
+                        {{ taskinfo.taskname }}
+                    </a>
+
+                    {% if taskinfo.status == 0 %}
+                        <span class="badge rounded-pill bg-secondary">
+                                        waiting
+                                        </span>
+                    {% elif taskinfo.status == 1 %}
+                        <span class="badge rounded-pill bg-primary">
+                                        processing
+                                        </span>
+                    {% elif  taskinfo.status == 2 %}
+                        <span class="badge rounded-pill bg-success">
+                                        closed
+                                        </span>
+                    {% endif %}
+                </div>
+                <div class="col" style="width: 150px">
+                </div>
+                <div class="col">
+
+                </div>
+                <div class="col">
+                    <div class="row justify-content-end">
+                        <div class="col-sm-auto align-self-center" style="margin-top: 5px">
+                            <form id="start_form1" action="/taskstart/" method="post">
+                                {% csrf_token %}
+                                <input value="{{ taskinfo.taskid }}" name="startid" type="hidden">
+                            </form>
+                            {% if taskinfo.status == 0 %}
+                                <button type="submit" class="btn btn-primary btn-sm" form="start_form1">开始任务</button>
+                            {% else %}
+                                <button type="button" class="btn btn-secondary btn-sm">开始任务</button>
+                            {% endif %}
+                        </div>
+                        <div class="col-sm-auto align-self-center" style="margin-top: 5px">
+                            {% if taskinfo.status == 2 %}
+                                <a href="/getfile/{{ taskinfo.taskid }}"  class="btn btn-success btn-sm">下载模型</a>
+                            {% else %}
+                                <button type="button" class="btn btn-secondary btn-sm">下载模型</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="width: 100%;margin-top: 20px;margin-left: 0;margin-right: 0;">
+            <div class="container bg-white " style="padding-top: 60px">
+                <div class="row" style="padding-left: 20px">
+                    <div class="col">
+                        <p class="text-left">
+                            <strong>taskid:</strong>
+                            {{ taskinfo.taskid }}
+                        </p>
+
+                    </div>
+                    <div class="col">
+                        <p class="text-left">
+                            <strong>全局迭代次数：</strong>
+                            {{ taskinfo.global_iteration }}
+                        </p>
+
+                    </div>
+
+                    <div class="col text-left">
+                        <p class="text-left">
+                            <strong>本地迭代次数：</strong>
+                            {{ taskinfo.local_iteration }}
+                        </p>
+                    </div>
+
+
+                </div>
+                <div class="row" style="padding-left: 20px">
+                    <div class="col">
+                        <p class="text-left">
+                            <strong>联邦学习算法：</strong>
+                            {{ taskinfo.algorithm }}
+                        </p>
+
+                    </div>
+                    <div class="col">
+                        <p class="text-left">
+                            <strong>数据集：</strong>
+                            {{ taskinfo.data_type }}
+                        </p>
+
+                    </div>
+                    <div class="col text-left">
+                        <p class="text-left">
+                            <strong>深度学习算法：</strong>
+                            {{ taskinfo.deeplg_alg }}
+                        </p>
+
+                    </div>
+                </div>
+                <div class="row" style="padding-left: 20px">
+                    <div class="col">
+                        <p class="text-left">
+                            <strong>
+                                使用节点数：
+                            </strong>
+                            {{ taskinfo.client_num }}
+                        </p>
+                    </div>
+
+                    <div class="col">
+                        <p class="text-left">
+                            <strong>
+                                每轮选节点个数：
+                            </strong>
+                            {{ taskinfo.chose_num }}
+                        </p>
+                    </div>
+
+                    <div class="col">
+                        <p class="text-left">
+                            <strong>
+                                任务创建时间：
+                            </strong>
+                            {{ taskinfo.create_time }}
+                        </p>
+                    </div>
+                </div>
+                <div class="container mt-3">
+                    <p style="padding-left: 20px"><strong>任务进度：</strong></p>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                             style="width:{{ processing }}%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div id="bar_div" style="width: 1200px;height:400px; padding-left: 40px;padding-top: 20px">
+                    </div>
+                    {% if taskinfo.algorithm == "VFed-avg" %}
+                        <div class="row justify-content-around">
+                            <div class="col-sm-auto">
+                                <div id="servervote"
+                                     style="width: 500px;height: 400px ;padding-top: 20px"></div>
+                            </div>
+                            <div class="col-sm-auto">
+                                <div id="clientvote"
+                                     style="width: 500px;height: 400px;padding-top: 20px"></div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <script src="{% static 'plugins/echarts-5.4.1/dist/echarts.js' %}"></script>
+                <script type="text/javascript">
+                    // 柱状图
+                    function show_bar() {
+                        //控件
+                        var bar_widget = echarts.init(document.getElementById('bar_div'));
+                        option1 = {
+                            title: {
+                                text: '训练结果'
+                            },
+                            xAxis: {
+                                data: {{ epochs|safe}}
+                            },
+                            yAxis: {},
+                            tooltip: {
+                                trigger: "axis"
+                            },
+                            series: [
+                                {
+                                    data: {{ acc }},
+                                    type: 'line',
+                                    smooth: true,
+                                    name: 'accuracy'
+                                },
+                                {
+                                    data: {{ loss }},
+                                    type: 'line',
+                                    smooth: true,
+                                    name: 'loss'
+                                }
+                            ]
+                        };
+                        bar_widget.setOption(option1);
+                        {% if taskinfo.algorithm == 'VFed-avg' %}
+                            var server_vote = echarts.init(document.getElementById('servervote'));
+                            var client_vote = echarts.init(document.getElementById('clientvote'));
+                            //设置option
+                            option2 = {
+                                title: [{
+                                    text: 'server_vote',
+
+                                    left: 'center',
+                                    textStyle: {
+
+                                        fontSize: 18,
+                                    }
+                                }], tooltip: {
+                                    show: true,                 // 是否显示提示框
+                                    formatter: '{b} </br> is voted {c} times '      // 提示框显示内容,此处{b}表示各数据项名称，此项配置为默认显示项，{c}表示数据项的值，默认不显示，({d}%)表示数据项项占比，默认不显示。
+                                },
+                                legend: {
+                                    orient: 'vertical',
+                                    x: 'left',
+                                    data: {{ votedata|safe }}
+                                },
+                                series: [
+                                    {
+                                        type: 'pie',
+                                        radius: ['50%', '70%'],
+                                        avoidLabelOverlap: false,
+                                        label: {
+                                            show: false,
+                                            position: 'center'
+                                        },
+                                        labelLine: {
+                                            show: false
+                                        },
+                                        emphasis: {
+                                            label: {
+                                                show: true,
+                                                fontSize: '30',
+                                                fontWeight: 'bold'
+                                            }
+                                        },
+                                        data:{{ json_server|safe }}
+                                    }
+                                ]
+                            }
+                            option3 = {
+                                title: [{
+                                    text: 'client_vote',
+
+                                    left: 'center',
+                                    textStyle: {
+
+                                        fontSize: 18,
+                                    }
+                                }], tooltip: {
+                                    show: true,                 // 是否显示提示框
+                                    formatter: '{b} </br> is voted {c} times '      // 提示框显示内容,此处{b}表示各数据项名称，此项配置为默认显示项，{c}表示数据项的值，默认不显示，({d}%)表示数据项项占比，默认不显示。
+                                },
+                                legend: {
+                                    orient: 'vertical',
+                                    x: 'left',
+                                    data: {{ votedata|safe }}
+                                },
+                                series: [
+                                    {
+                                        type: 'pie',
+                                        radius: ['50%', '70%'],
+                                        avoidLabelOverlap: false,
+                                        label: {
+                                            show: false,
+                                            position: 'center'
+                                        },
+                                        labelLine: {
+                                            show: false
+                                        },
+                                        emphasis: {
+                                            label: {
+                                                show: true,
+                                                fontSize: '30',
+                                                fontWeight: 'bold'
+                                            }
+                                        },
+                                        data:{{ json_client|safe }}
+                                    }
+                                ]
+                            }
+                            server_vote.setOption(option2)
+                            client_vote.setOption(option3)
+                        {% endif %}
+
+                    }
+
+                    window.onload = show_bar()
+                </script>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

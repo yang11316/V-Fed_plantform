@@ -1,0 +1,369 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container-fluid " style="padding-right: 0;padding-left: 0">
+        <div class="row bg-white " style="height: 70px; width: 100%; margin-left: 0;margin-right: 0;"></div>
+        <div class="row" style="width: 100%;margin-top: 20px;margin-left: 0;margin-right: 0;">
+            <div class="container bg-white text-center " style="padding-top: 60px;height: 90vh;">
+                <form id="home_form" method="post" action="">
+                    {% csrf_token %}
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text">TaskID</span>
+                                <input type="text" class="form-control" name="select_taskid">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text">任务名称<span
+                                        style="color: #ff0000;font-weight:bold">*</span></span>
+                                <input type="text" class="form-control" name="select_taskname">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text">聚合算法</span>
+                                <select class="form-control" name="select_algorithm">
+                                    <option style="display:none"></option>
+                                    <option value="Fed-avg">Fed-avg</option>
+                                    <option value="VFed-avg">VFed-avg</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text">数据集</span>
+                                <select class="form-control" name="select_data_type">
+                                    <option style="display:none"></option>
+                                    <option value="mnist">mnist</option>
+                                    <option value="kddcup99">kddcup99</option>
+                                    <option value="cifar"> cifar</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text">深度学习算法</span>
+                                <select class="form-control" name="select_deeplg_alg">
+                                    <option style="display:none"></option>
+                                    <option value="default">默认</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-sm-auto">
+                                    <a class="btn btn-secondary btn-sm" href="/home/">重置</a>
+                                </div>
+                                <div class="col-sm-auto">
+                                    <button type="submit" form="home_form" class="btn btn-primary btn-sm">查询</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </form>
+                <div class="row" style="padding-top: 40px;height: 415px">
+                    <div>
+                        <table class="table table-hover">
+                            <thead class="table-active">
+                            <tr>
+                                <th>序号</th>
+                                <th>TaskID</th>
+                                <th>任务名称</th>
+                                <th>创建时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for item in taskinfo_list %}
+
+                                <tr>
+                                    <td class="text-primary">{{ item.page_id }}  </td>
+                                    <td>{{ item.taskid }}  </td>
+                                    <td>{{ item.taskname }}  </td>
+                                    <td>{{ item.create_time }}  </td>
+                                    <td>
+                                        {% if item.status == 0 %}
+                                            <span class="badge rounded-pill bg-secondary">
+                                        waiting
+                                        </span>
+                                        {% elif item.status == 1 %}
+                                            <span class="badge rounded-pill bg-primary">
+                                        processing
+                                        </span>
+                                        {% elif  item.status == 2 %}
+                                            <span class="badge rounded-pill bg-success">
+                                        closed
+                                        </span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        <div class="row justify-content-center">
+                                            <div class="col-sm-auto">
+                                                <button type="button" class="btn btn-primary btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#datainfo"
+                                                        onclick="editinfo('{{ item.taskname }}','{{ item.global_iteration }}',
+                                                                '{{ item.local_iteration }}','{{ item.algorithm }}','{{ item.create_time }}',
+                                                                '{{ item.client_num }}','{{ item.chose_num }}','{{ item.data_type }}','{{ item.deeplg_alg }}',
+                                                                '{{ item.description }}'
+                                                                )"
+                                                >
+                                                    查看详情
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-auto">
+                                                <a class="btn btn-success btn-sm" href="/taskdata/?taskid={{ item.taskid }}">
+                                                    查询状态
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-auto">
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#datadel"
+                                                        onclick="editdel('{{ item.taskid }}','{{ item.status }}')"
+                                                >
+                                                    删除任务
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+                {% if search == "no" %}
+                    <div class="row justify-content-end">
+                        <div class="col-sm-auto">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <li class="page-item">
+                                        <a class="page-link" href="/home/?home_page={{ previous_page }}"
+                                           aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    {% if curr_page > 1 %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="/home/?home_page={{ previous_page }}">{{ previous_page }}</a>
+                                        </li>
+                                    {% elif curr_page ==  1 %}
+                                    {% endif %}
+                                    <li class="page-item active"><a class="page-link" href="#">{{ curr_page }}</a></li>
+                                    {% if curr_page != next_page %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="/home/?home_page={{ next_page }}">{{ next_page }}</a>
+                                        </li>
+                                    {% elif curr_page == next_page %}
+
+                                    {% endif %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="/home/?home_page={{ next_page }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                {% endif %}
+                </div>
+
+            </div>
+
+            <div class="modal" id="datadel" tabindex="-1" role="dialog" aria-labelledby="ModalLabel">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <!-- 模态框头部 -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">提示</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <!-- 模态框内容 -->
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <strong>确认要删除此任务吗？</strong>
+                            </div>
+                            <div id="taid" class="mb-3">
+
+                            </div>
+                            <div id="tasu" class="mb-3">
+
+                            </div>
+                        </div>
+
+                        <!-- 模态框底部 -->
+                        <div class="modal-footer">
+                            <div>
+                                <form name="task_del" method="post" action="/taskdel/">
+                                    {% csrf_token %}
+                                    <input id="del_taskid" type="hidden" name="taskid">
+                                    <button type="submit" class="btn btn-success">确认</button>
+                                </form>
+
+                            </div>
+
+                            <div>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">取消</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal " id="datainfo"  aria-labelledby="ModalLabel">
+                <div class="modal-dialog " role="document">
+                    <div class="modal-content">
+                        <!-- 模态框头部 -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">任务详情</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <!-- 模态框内容 -->
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <p style="margin: 0px; line-height: 32px; color: rgb(66, 82, 110); font-weight: bold;">
+                                    任务名称</p>
+                                <div class="alert alert-secondary " style="padding: 3px" role="alert"
+                                     id="info_taskname"></div>
+                            </div>
+                            <div class="mb-3">
+                                <p style="margin: 0px; line-height: 32px; color: rgb(66, 82, 110); font-weight: bold;">
+                                    Global_epoch</p>
+                                <div class="alert alert-secondary " style="padding: 3px" role="alert"
+                                     id="info_global_epoch"></div>
+                            </div>
+                            <div class="mb-3">
+                                <p style="margin: 0px; line-height: 32px; color: rgb(66, 82, 110); font-weight: bold;">
+                                    Local_epoch</p>
+                                <div class="alert alert-secondary " style="padding: 3px" role="alert"
+                                     id="info_local_epoch"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <p style="margin: 0px; line-height: 32px; color: rgb(66, 82, 110); font-weight: bold;">
+                                    联邦学习算法</p>
+                                <div class="alert alert-secondary " style="padding: 3px" role="alert"
+                                     id="info_algorithm"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <p style="margin: 0px; line-height: 32px; color: rgb(66, 82, 110); font-weight: bold;">
+                                    使用节点数</p>
+                                <div class="alert alert-secondary " style="padding: 3px" role="alert"
+                                     id="info_client_num"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <p style="margin: 0px; line-height: 32px; color: rgb(66, 82, 110); font-weight: bold;">
+                                    每轮选择节点数</p>
+                                <div class="alert alert-secondary " style="padding: 3px" role="alert"
+                                     id="info_chose_num"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <p style="margin: 0px; line-height: 32px; color: rgb(66, 82, 110); font-weight: bold;">
+                                    数据集</p>
+                                <div class="alert alert-secondary " style="padding: 3px" role="alert"
+                                     id="info_data_type"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <p style="margin: 0px; line-height: 32px; color: rgb(66, 82, 110); font-weight: bold;">
+                                    深度学习算法</p>
+                                <div class="alert alert-secondary " style="padding: 3px" role="alert"
+                                     id="info_deeplg_alg"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <p style="margin: 0px; line-height: 32px; color: rgb(66, 82, 110); font-weight: bold;">
+                                    创建时间</p>
+                                <div class="alert alert-secondary " style="padding: 3px" role="alert"
+                                     id="info_create_time"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <p style="margin: 0px; line-height: 32px; color: rgb(66, 82, 110); font-weight: bold;">
+                                    任务描述</p>
+                                <div class="alert alert-secondary" style="padding: 3px" role="alert"
+                                     id="description"></div>
+                            </div>
+                        </div>
+
+                        <!-- 模态框底部 -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <script type="text/javascript">
+                /*当#datainfo模态框显示时*/
+                function editinfo(taskname,global_epoch,local_epoch,algorithm,create_time,client_num,chose_num,data_type,deeplg_alg,recipient_description){
+                    var con = "<strong>暂无描述</strong>"
+                    $('#info_taskname').text(taskname)
+                    $('#info_global_epoch').text(global_epoch)
+                    $('#info_local_epoch').text(local_epoch)
+                    $('#info_algorithm').text(algorithm)
+                    $('#info_create_time').text(create_time)
+                    $('#info_client_num').text(client_num)
+                    $('#info_chose_num').text(chose_num)
+                    $('#info_data_type').text(data_type)
+                    $('#info_deeplg_alg').text(deeplg_alg)
+
+
+                    if (recipient_description == undefined || recipient_description == null || recipient_description == "") {
+                        document.getElementById('description').innerHTML = con
+                    } else {
+                        document.getElementById('description').innerHTML = recipient_description
+                    }
+                }
+
+
+                 function editdel(task_id, status) {
+                    var con = ''
+                    var con1 = "<p class='text-primary'> <span class='text-black'>任务id:</span><strong>" + task_id + "</strong></p>"
+                    if (status == "0") {
+                        con = "<p class='text-primary'> <span class='text-black'>当前任务状态:</span><strong>Wait</strong></p>"
+                    }
+                    if (status == "1") {
+                        con = "<p class='text-primary'> <span class='text-black'>当前任务状态:</span><strong>Processing</strong></p>"
+                    }
+                    if (status == "2") {
+                        con = "<p class='text-primary'> <span class='text-black'>当前任务状态:</span><strong>Closed</strong></p>"
+                    }
+
+                    $('#del_taskid').val(task_id)
+                    document.getElementById('tasu').innerHTML = con
+                    document.getElementById('taid').innerHTML = con1
+
+                }
+            </script>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}

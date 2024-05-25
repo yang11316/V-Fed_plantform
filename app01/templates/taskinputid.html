@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+    <div class="modal fade" id="mymodal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- 模态框头部 -->
+                <div class="modal-header">
+                    <h4 class="modal-title">请输入taskid</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- 模态框内容 -->
+                <div class="modal-body">
+                    <form method="post" action="" id="idform">
+                        {% csrf_token %}
+                        <div class="input-group input-group-sm mb-3">
+                            <p style="margin: 0px; line-height: 32px; color: rgb(66, 82, 110); font-weight: bold;">
+                                   taskid:&nbsp;</p>
+                            <input type="text" class="form-control" name="taskid">
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 模态框底部 -->
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-sm" form="idform">搜索</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">关闭</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        window.onload = function () {
+            $("#mymodal").modal("toggle");
+        }
+
+
+    </script>
+{% endblock %}

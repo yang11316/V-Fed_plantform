@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/VFed_plantform.iml" filepath="$PROJECT_DIR$/.idea/VFed_plantform.iml" />
+      <module fileurl="file://E:/pycharm_project/django_project/first_project/.idea/first_project.iml" filepath="E:/pycharm_project/django_project/first_project/.idea/first_project.iml" />
+      <module fileurl="file://E:/pycharm_project/pythonProject/.idea/pythonProject.iml" filepath="E:/pycharm_project/pythonProject/.idea/pythonProject.iml" />
+      <module fileurl="file://E:/新大毕设/代码文件/测试目录/.idea/测试目录.iml" filepath="E:/新大毕设/代码文件/测试目录/.idea/测试目录.iml" />
+    </modules>
+  </component>
+</project>
